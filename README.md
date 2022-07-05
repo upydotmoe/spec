@@ -5,7 +5,7 @@
 <br><br>
 <p align="center">
   <b><i>links:</i></b> 
-  <a href="https://public.upy.moe/docs.json">Swagger Online Docs</a>&nbsp; • &nbsp;
+  <a href="https://public.upy.moe/docs">Swagger Online Docs</a>&nbsp; • &nbsp;
   <a href="https://public.upy.moe/docs.json">JSON formatted</a>
 </p>
 <br>
