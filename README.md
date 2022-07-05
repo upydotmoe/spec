@@ -17,4 +17,4 @@ The next step is go to **Generate Client** and select **typescript-fetch**, wait
 
 
 #### # Further information
-For further information or question you can ask me on <a href="https://twitter.com/nor1c_">https://twitter.com/nor1c_</a>.
+For further information or question you can ask me on <a href="https://twitter.com/nor1c_">`https://twitter.com/nor1c_`</a>.
