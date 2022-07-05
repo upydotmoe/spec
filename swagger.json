@@ -1,1 +1,4774 @@
-{"openapi":"3.0.0","info":{"version":"1.0.0","title":"Upy API Documentation","description":"API documentation of Upy - a social community platform for Artists.","license":{"name":"MIT","url":"https://opensource.org/licenses/MIT"}},"paths":{"/auth/registration/register":{"post":{"tags":["Auth Service/Registration"],"operationId":"register","summary":"Register a new user","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"username":{"type":"string"},"email":{"type":"string"},"name":{"type":"string"},"gender":{"description":"User gender, pick either m or f","type":"string","enum":["m","f"]},"password":{"type":"string"}},"required":["username","email","name","gender","password"]}}}},"responses":{"201":{"description":"User successfully registered","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"There is an error while trying to register the user","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/registration/check/email":{"post":{"tags":["Auth Service/Registration"],"operationId":"checkEmail","summary":"Check if the email is already taken or not","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"email":{"type":"string"}},"required":["email"]}}}},"responses":{"200":{"description":"Email is not taken and available to use","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"409":{"description":"Email is already taken","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/registration/check/username":{"post":{"tags":["Auth Service/Registration"],"operationId":"checkUsername","summary":"Check if the username is already taken or not","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"username":{"type":"string"}},"required":["username"]}}}},"responses":{"200":{"description":"Username is not taken yet and available to use","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"409":{"description":"Username already taken","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/registration/resend-verification":{"post":{"tags":["Auth Service/Registration"],"operationId":"resendVerificationMail","summary":"Resend email verification","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"email":{"type":"string"}},"required":["email"]}}}},"responses":{"200":{"description":"Mail verification successfully sent to email address","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"404":{"description":"Email address is not registered on the database","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/registration/verify/email/{token1}/{token2}":{"get":{"tags":["Auth Service/Registration"],"operationId":"verifyEmail","summary":"Verify the email address","parameters":[{"in":"path","name":"token1","required":true,"schema":{"type":"string"}},{"in":"path","name":"token2","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Email successfully verified","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"409":{"description":"Email already verified","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/authenticate":{"post":{"tags":["Auth Service/Authentication"],"operationId":"authenticate","summary":"Authenticate user","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"email_username":{"type":"string"},"password":{"type":"string"}},"required":["email_username password"]}}}},"responses":{"200":{"description":"Use successfully authenticated","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"token":{"type":"string"},"refresh_token":{"type":"string"}}}}}]}}}},"406":{"description":"Given credential is invalid","$ref":"#/components/responses/PasswordMissmatchError"}}}},"/auth/check":{"get":{"tags":["Auth Service/Authentication"],"operationId":"tokenCheck","summary":"Check if auth token is valid","security":[{"bearerAuth":[]}],"responses":{"200":{"description":"Return token status","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"token":{"type":"string"}}}}}]}}}},"401":{"description":"Token is invalid or expired","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/auth/refresh":{"post":{"tags":["Auth Service/Authentication"],"operationId":"refreshToken","summary":"Refresh current token","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"refresh_token":{"type":"string"}}}}}},"responses":{"200":{"description":"Token successfully refreshed","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"token":{"type":"string"},"refresh_token":{"type":"string"}}}}}]}}}},"401":{"description":"Token is invalid or expired","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/password/forgot":{"post":{"tags":["User/Forgot Password"],"operationId":"sendResetPasswordInstruction","summary":"Send a password recovery request to email address","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"email":{"type":"string"}},"required":["email"]}}}},"responses":{"200":{"description":"Recovery request successfully sent to email","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"404":{"description":"Email address is not registered or haven't verified yet","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/password/recover/token-validity/{token1}/{token2}":{"get":{"tags":["User/Forgot Password"],"operationId":"checkResetPasswordTokenValidity","summary":"Check if recovery token is still valid","parameters":[{"in":"path","name":"token1","required":true,"schema":{"type":"string"}},{"in":"path","name":"token2","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return token status","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"valid":{"type":"boolean"}}}}}}}}}}},"/user/password/recover/change":{"post":{"tags":["User/Forgot Password"],"operationId":"recoverChangePassword","summary":"Change password","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"user_id":{"type":"number"},"iv":{"type":"string","description":"Iv token obtained from url"},"content":{"type":"string","description":"Content token obtained from url"},"new_password":{"type":"string","description":"The new password"}},"required":["user_id","iv","content","new_password"]}}}},"responses":{"200":{"description":"Password successfully changed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"403":{"description":"Reset token is invalid or expired","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/password/current/check":{"post":{"tags":["User/Change Password"],"operationId":"checkCurrentPassword","summary":"Validate confirmation password","description":"Used to validate current password before changing the password","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"user_id":{"type":"number"},"current_password":{"type":"string"}},"required":["user_id","current_password"]}}}},"responses":{"200":{"description":"Confirmation password match with current password","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"403":{"description":"Confirmation password did not match with current password","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/password/renew":{"post":{"tags":["User/Change Password"],"operationId":"changePassword","summary":"Change current password","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"user_id":{"type":"number"},"current_password":{"type":"string"},"new_password":{"type":"string"}},"required":["user_id","current_password","new_password"]}}}},"responses":{"200":{"description":"Password changed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Confirmation password did not match with current password","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/info":{"get":{"tags":["User"],"operationId":"getUserInfo","summary":"Get current authenticated user info","description":"Get current authenticated user information based on token given on header","security":[{"bearerAuth":[]}],"responses":{"200":{"description":"Return information of authenticated user (current user logon)","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"$ref":"#/components/schemas/UserAllModel"}}}}}},"401":{"description":"User is not authenticated","$ref":"#/components/responses/UnauthorizedError"}}}},"/user/info/id/{userId}":{"get":{"tags":["User"],"operationId":"getUserInfo","summary":"Get user info by ID","parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return user info","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserAllModel"}}}},"404":{"description":"User with given ID not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/info/username/{username}":{"get":{"tags":["User"],"operationId":"getUserInfo","summary":"Get user info by username","parameters":[{"in":"path","name":"username","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return user info","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserAllModel"}}}},"404":{"description":"User with username not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/info/pen/{penName}":{"get":{"tags":["User"],"operationId":"getUserInfo","summary":"Get user info by Pen Name","parameters":[{"in":"path","name":"penName","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return user info","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserAllModel"}}}},"404":{"description":"User with Pen Name not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/pen/check/{penName}":{"get":{"tags":["User"],"summary":"Check is pen name taken or not","security":[{"bearerAuth":[]}],"operationId":"penNameCheck","parameters":[{"in":"path","name":"penName","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return Pen Name status","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/info":{"post":{"tags":["User/Update User Info"],"operationId":"updateUserInfo","summary":"Update user basic information such as name, bio, etc.","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"},"city_id":{"type":"number"},"name":{"type":"string"},"gender":{"type":"string","enum":["m","f"]},"bio":{"type":"string"}},"required":["id"]}}}},"responses":{"200":{"description":"User info successfully updated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Current user don't have permission to update user info","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/social":{"post":{"tags":["User/Update User Info"],"operationId":"updateUserSocial","summary":"Update user social links","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"},"facebook":{"type":"string"},"instagram":{"type":"string"},"patreon":{"type":"string"},"twitter":{"type":"string"},"youtube":{"type":"string"}},"required":["id"]}}}},"responses":{"200":{"description":"User socials successfully updated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Current user don't have permission to update user socials","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/preference":{"post":{"tags":["User/Update User Info"],"operationId":"updateUserPreference","summary":"Update user settings","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"},"language":{"type":"string","enum":["en-US","ja-JP","id-ID"]},"dark_mode":{"type":"number","enum":[0,1]},"show_explicit":{"type":"number","enum":[0,1]}},"required":["id"]}}}},"responses":{"200":{"description":"User preference successfully updated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Current user don't have permission to update user preference","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/username":{"post":{"tags":["User/Update User Info"],"summary":"Change current username","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"new_username":{"type":"string"}},"required":["new_username"]}}}},"responses":{"200":{"description":"Successfully changed username","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"403":{"description":"Need pro membership to do this action","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"409":{"description":"Username taken","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/avatar":{"post":{"tags":["User/Change User Media"],"operationId":"updateAvatar","summary":"Change current user avatar","security":[{"bearerAuth":[]}],"requestBody":{"content":{"multipart/form-data":{"schema":{"type":"object","properties":{"avatar":{"type":"string","format":"binary"}}}}}},"responses":{"200":{"description":"Successfully change avatar","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"avatar":{"type":"string"}}}}}]}}}},"406":{"description":"There is an error while trying to change the avatar","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/update/cover":{"post":{"tags":["User/Change User Media"],"operationId":"updateCover","summary":"Change current user cover","security":[{"bearerAuth":[]}],"requestBody":{"content":{"multipart/form-data":{"schema":{"type":"object","properties":{"cover":{"type":"string","format":"binary"}}}}}},"responses":{"200":{"description":"Successfully change cover","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"cover":{"type":"string"}}}}}]}}}},"406":{"description":"There is an error while trying to change the cover","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/follows/follow/{userIdToFollow}":{"post":{"tags":["User/Following & Followers"],"operationId":"followUser","summary":"Follow a user","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"userIdToFollow","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"User followed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"409":{"description":"User already followed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/follows/unfollow/{userIdToUnfollow}":{"post":{"tags":["User/Following & Followers"],"operationId":"unfollowUser","summary":"Unfollow a user","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"userIdToUnfollow","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"User unfollowed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"400":{"description":"User already unfollowed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/user/follows/following/{userId}":{"get":{"tags":["User/Following & Followers"],"operationId":"followingList","summary":"List followed user of specific user","parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return user followed by user Id provided on url param","content":{"application/json":{"schema":{"properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"following":{"type":"array","items":{"$ref":"#/components/schemas/UserLiteModel"}}}}}}}}}}}},"/user/follows/followers/{userId}":{"get":{"tags":["User/Following & Followers"],"operationId":"followersList","summary":"List followers of user of specific user","parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return followers of user Id provided on url param","content":{"application/json":{"schema":{"properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"followers":{"type":"array","items":{"$ref":"#/components/schemas/UserLiteModel"}}}}}}}}}}}},"/collections/create":{"post":{"tags":["Collection"],"operationId":"create","summary":"Create a new collection","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number","enum":[0,1]},"type":{"type":"string","enum":["artwork","comic","tutorial"]}}}}}},"responses":{"201":{"description":"Collection created","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"allOf":[{"$ref":"#/components/schemas/CollectionModel"}]}}}]}}}}}}},"/collections/{id}":{"get":{"tags":["Collection"],"operationId":"detail","summary":"Get collection info by collection Id","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return collection info","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CollectionModel"}}}},"404":{"description":"Collection not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}},"delete":{"tags":["Collection"],"summary":"Remove a collection","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Collection successfully removed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"400":{"description":"Don't have permission to delete","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/collections/{id}/items":{"get":{"tags":["Collection"],"operationId":"listCollectionItems","summary":"Get list of collection","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"}],"responses":{"200":{"description":"Return list of collection","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"items":{"type":"array","items":{"$ref":"#/components/schemas/CollectionHasArtworksModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/collections/user/{userId}":{"get":{"tags":["Collection"],"operationId":"listUserCollections","summary":"List collection owned by user","parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"number"}},{"in":"query","name":"mode","required":true,"schema":{"type":"string","enum":["artwork","comic","tutorial"]}},{"in":"query","name":"name","required":false,"schema":{"type":"string"}}],"responses":{"200":{"description":"Return user collections","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"collections":{"type":"array","items":{"$ref":"#/components/schemas/CollectionModel"}}}}}}}}}}}},"/collections/later":{"post":{"tags":["Collection"],"operationId":"addItemForLater","summary":"Add item to 'for later' collection","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"ids":{"type":"array","items":{"type":"number"}}}}}}},"parameters":[{"in":"query","name":"mode","required":true,"schema":{"type":"string","enum":["artwork","comic","tutorial"]}}],"responses":{"201":{"description":"Item added to collection","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/collections/{collectionId}/items":{"post":{"tags":["Collection"],"operationId":"addItemToCollection","summary":"Add item(s) to specific collection","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"collectionId","required":true,"schema":{"type":"number"}},{"in":"query","name":"mode","required":true,"schema":{"type":"string","enum":["artwork","comic","tutorial"]}}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"ids":{"type":"array","items":{"type":"number"}}}}}}},"responses":{"201":{"description":"Item added to collection","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}},"delete":{"tags":["Collection"],"operationId":"removeItemFromCollection","summary":"Remove item(s) from specific collection","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"collectionId","required":true,"schema":{"type":"number"}},{"in":"query","name":"mode","required":true,"schema":{"type":"string","enum":["artwork","comic","tutorial"]}}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"ids":{"type":"array","items":{"type":"number"}}}}}}},"responses":{"200":{"description":"Selected item(s) Successfully removed from collection","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/post":{"post":{"tags":["Artwork/CRUD"],"operationId":"post","summary":"Create/upload new artworks","security":[{"bearerAuth":[]}],"requestBody":{"content":{"multipart/form-data":{"schema":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"tags":{"type":"string"},"is_explicit":{"type":"number","enum":[0,1]},"scheduled_post":{"type":"string","nullable":true},"files[]":{"type":"array","items":{"type":"string","format":"binary"}},"file_order[]":{"type":"array","items":{"type":"number"}}}}}}},"responses":{"201":{"description":"Successfully uploaded new artwork","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"id":{"type":"number"},"user_id":{"type":"number"},"title":{"type":"string"},"description":{"type":"string"},"is_explicit":{"type":"number","enum":[0,1]},"scheduled_post":{"type":"string"},"created_at":{"type":"string"},"updated_at":{"type":"string"}}}}}]}}}}}}},"/artworks":{"patch":{"tags":["Artwork/CRUD"],"operationId":"updateWork","summary":"Update existing artwork information","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"},"title":{"type":"string"},"description":{"type":"string"},"is_explicit":{"type":"number","enum":[0,1]},"scheduled_post":{"type":"string","nullable":true}},"required":["id"]}}}},"responses":{"200":{"description":"Artwork information successfully updated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Input is not acceptable","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}},"delete":{"tags":["Artwork/CRUD"],"operationId":"deleteWork","summary":"Remove artwork","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"number"}}}}},"responses":{"200":{"description":"Selected artwork(s) successfully removed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/view/{id}":{"get":{"tags":["Artwork/CRUD"],"operationId":"view","summary":"View detail information of artwork","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return information of artwork","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ArtworkModel"}}}}}}},"/artworks/count-likes/{id}":{"get":{"tags":["Artwork/Likes"],"operationId":"countLikes","summary":"Count how many like does the work have","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return the total number of likes","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"total":{"type":"number"}}}}}}}}}}},"/artworks/like":{"post":{"tags":["Artwork/Likes"],"operationId":"like","summary":"Like an artwork","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"}}}}}},"responses":{"200":{"description":"Return status that the artwork successfully liked","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"404":{"description":"Return work not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/unlike":{"post":{"tags":["Artwork/Likes"],"operationId":"unlike","summary":"Unlike a liked artwork","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"}}}}}},"responses":{"200":{"description":"Return status that the artwork successfully unliked","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/albums/add-work":{"post":{"tags":["Artwork/Albums"],"operationId":"addWorkToAlbum","summary":"Add artwork(s) to album","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"album_id":{"type":"number"},"work_ids":{"type":"array","items":{"type":"number"}}},"required":["album_id","work_ids"]}}}},"responses":{"201":{"description":"Artwork(s) added to album","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Don't have a right to add work(s) to selected album or the album is not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/albums/work/remove":{"delete":{"tags":["Artwork/Albums"],"summary":"Remove a work(s) from album","operationId":"removeWorkFromAlbum","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"album_id":{"type":"number"},"work_ids":{"type":"array","items":{"type":"number"}}},"required":["album_id","work_ids"]}}}},"responses":{"200":{"description":"Successfully remove selected work(s) from selected album","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"You don't have permission to perform this action on this album or the album is not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/albums/{id}":{"get":{"tags":["Artwork/Albums"],"operationId":"view","summary":"View detailed information about the album","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return detail information of album","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AlbumLiteModel"}}}}}},"delete":{"tags":["Artwork/Albums"],"summary":"Delete an album","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Album successfully removed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"406":{"description":"Current user don't have permission to delete this album","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/albums/create":{"post":{"tags":["Artwork/Albums"],"operationId":"crate","summary":"Create a new artwork album","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number","enum":[0,1]}},"required":["name","is_public"]}}}},"responses":{"201":{"description":"Album successfully created","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"id":{"type":"number"},"user_id":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number"},"created_at":{"type":"string"}}}}}]}}}}}}},"/artworks/albums":{"patch":{"tags":["Artwork/Albums"],"operationId":"update","summary":"Update information of current existing album","security":[{"bearerAuth":[]}],"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"id":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number","enum":[0,1]}},"required":["id"]}}}},"responses":{"200":{"description":"Successfully updating album","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/albums/works/{id}":{"get":{"tags":["Artwork/Albums"],"summary":"List album items","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"}},{"in":"query","name":"page","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return album items","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"works":{"type":"array","items":{"type":"object","properties":{"artworks":{"$ref":"#/components/schemas/ArtworkLiteModel"}}}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/albums/user/{userId}":{"get":{"tags":["Artwork/Albums"],"operationId":"listUserAlbums","summary":"List user's albums","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"}},{"in":"query","name":"page","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return list of user's albums","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"albums":{"type":"array","items":{"$ref":"#/components/schemas/AlbumModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/comments/{id}":{"get":{"tags":["Artwork/Comments"],"operationId":"getComments","summary":"List comments of artwork","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"}},{"in":"query","name":"page","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Return comments of artwork","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"comments":{"type":"array","items":{"$ref":"#/components/schemas/CommentModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}},"delete":{"tags":["Artwork/Comments"],"operationId":"removeComment","summary":"Remove a comment","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Comment successfully removed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/comments":{"get":{"tags":["Artwork/Comments"],"operationId":"addComment","summary":"Add new comment to artwork","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"work_id":{"type":"number"},"comment":{"type":"string"}},"required":["work_id","comment"]}}}},"responses":{"201":{"description":"Comment successfully added","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"id":{"type":"number"},"work_id":{"type":"number"},"user_id":{"type":"number"},"comment":{"type":"string"},"created_at":{"type":"string"},"updated_at":{"type":"string"}}}}}]}}}}}}},"/artworks/comments/reply":{"post":{"tags":["Artwork/Comments/Replies"],"operationId":"reply","summary":"Reply a comment","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"comment_id":{"type":"number"},"reply":{"type":"string"}},"required":["comment_id","reply"]}}}},"responses":{"201":{"description":"Reply successfully added","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"id":{"type":"number"},"comment_id":{"type":"number"},"content":{"type":"string"},"created_at":{"type":"string"},"updated_at":{"type":"string"}}}}}]}}}}}}},"/artworks/comments/reply/{replyId}":{"delete":{"tags":["Artwork/Comments/Replies"],"operationId":"removeReply","summary":"Remove a reply","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"replyId","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Reply successfully removed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}},"400":{"description":"Don't have permission to do this action","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/comments/replies/{commentId}":{"get":{"tags":["Artwork/Comments/Replies"],"operationId":"getReplies","summary":"List replies of comment","parameters":[{"in":"path","name":"commentId","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"}],"responses":{"200":{"description":"Return list of replies of comment","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"replies":{"type":"array","items":{"$ref":"#/components/schemas/ReplyModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/comments/reply/like/{replyid}":{"post":{"tags":["Artwork/Comments/Replies"],"operationId":"likeReply","summary":"Like a reply","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"replyId","required":true,"schema":{"type":"number"}}],"responses":{"201":{"description":"Reply successfully liked","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/comments/replies/unlike/{replyId}":{"delete":{"tags":["Artwork/Comments/Replies"],"operationId":"unlikeReply","summary":"Unlike a reply","security":[{"bearerAuth":[]}],"parameters":[{"in":"path","name":"replyId","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Successfully unliked reply","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/comments/like/{id}":{"post":{"tags":["Artwork/Comments/Likes"],"operationId":"like","summary":"Like a comment","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Comment successfully liked","content":{"application/json":{"schema":{"allOf":[{"$ref":"#/components/schemas/SuccessMessageModel"},{"type":"object","properties":{"data":{"type":"object","properties":{"user_id":{"type":"number"},"comment_id":{"type":"number"},"created_at":{"type":"string"}}}}}]}}}}}}},"/artworks/comments/unlike/{id}":{"delete":{"tags":["Artwork/Comments/Likes"],"operationId":"unlike","summary":"Unlike a comment","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Successfully unliked a comment","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/add-view/{id}":{"post":{"tags":["Artwork/Views"],"operationId":"addViewCount","summary":"Increase view count of artwork","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}}],"responses":{"200":{"description":"Successfully increased view count of artwork","content":{"application/json":{"schema":{"$ref":"#/components/schemas/SuccessMessageModel"}}}}}}},"/artworks/count-views/{id}":{"get":{"tags":["Artwork/Views"],"operationId":"countViews","parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"number"}},{"in":"query","name":"mode","required":true,"schema":{"type":"string","enum":["daily","weekly","monthly","all-time"]}}],"responses":{"200":{"description":"Return total of view of the artwork","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"views":{"type":"number"}}}}}}}}}}},"/artworks/user/{userId}":{"get":{"tags":["Artwork/List"],"operationId":"getUserArtworks","summary":"List user's artworks","parameters":[{"in":"path","name":"userId","required":true,"schema":{"type":"number"}},{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"}],"responses":{"200":{"description":"Return user's artworks","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"works":{"type":"array","items":{"$ref":"#/components/schemas/ArtworkLiteModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/latest":{"get":{"tags":["Artwork/List"],"operationId":"getLatestWorks","summary":"List latest uploaded artworks","parameters":[{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"},{"in":"query","name":"mode","required":false,"schema":{"type":"string","enum":["safe","explicit"]}}],"responses":{"200":{"description":"Return latest uploaded artworks","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"works":{"type":"array","items":{"$ref":"#/components/schemas/ArtworkLiteModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/following":{"get":{"tags":["Artwork/List"],"operationId":"getFollowingArtworks","summary":"Get latest uploaded artworks from followed users","parameters":[{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"},{"in":"query","name":"mode","required":false,"schema":{"type":"string","enum":["safe","explicit"]}}],"responses":{"200":{"description":"Return latest uploaded artworks","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"works":{"type":"array","items":{"$ref":"#/components/schemas/ArtworkLiteModel"}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}},"/artworks/most":{"get":{"tags":["Artwork/List"],"operationId":"getMost","summary":"List most popular artworks (with advanced sort and filter features)","parameters":[{"in":"query","name":"per_page","required":true,"schema":{"type":"number"},"description":"How many record to show per page of pagination"},{"in":"query","name":"page","required":true,"schema":{"type":"number"},"description":"Pagination index"},{"in":"query","name":"range","required":true,"schema":{"type":"string","enum":["daily","weekly","monthly","all-time"]}},{"in":"query","name":"by","required":true,"schema":{"type":"string","enum":["likes","comments","views","none"]}},{"in":"query","name":"mode","required":false,"schema":{"type":"string","enum":["safe","explicit"]}}],"responses":{"200":{"description":"Return latest uploaded artworks","content":{"application/json":{"schema":{"type":"object","properties":{"success":{"type":"boolean"},"data":{"type":"object","properties":{"works":{"type":"array","items":{"type":"object","properties":{"id":{"type":"number"},"is_explicit":{"type":"number"},"driver":{"type":"string"},"bucket":{"type":"string"},"filename":{"type":"string"},"total_pics":{"type":"number"},"total_likes":{"type":"number"},"total_comments":{"type":"number"},"total_views":{"type":"number"},"total_interactions":{"type":"number"}}}},"pagination":{"$ref":"#/components/schemas/PaginationModel"}}}}}}}}}}}},"components":{"securitySchemes":{"bearerAuth":{"type":"http","description":"JWT authentication header using the bearer scheme","scheme":"bearer","bearerFormat":"JWT"},"none":{"type":"http","description":"Publicly accessible (no authentication needed, but the result might be different from authenticated user)","scheme":"none"}},"responses":{"UnauthorizedError":{"description":"Access token is missing or invalid"},"PasswordMissmatchError":{"description":"Given credential is invalid"}},"schemas":{"SuccessMessageModel":{"type":"object","properties":{"success":{"type":"boolean"},"message":{"type":"string"}}},"UserLiteModel":{"type":"object","properties":{"id":{"type":"number"},"username":{"type":"string"},"pen_name":{"type":"string"},"name":{"type":"string"},"bio":{"type":"string"},"avatar":{"type":"string"},"avatar_server":{"type":"string"},"avatar_dir":{"type":"string"}}},"UserModel":{"allOf":[{"$ref":"#/components/schemas/UserLiteModel"},{"type":"object","properties":{"city_id":{"type":"number"},"gender":{"type":"string","enum":["m","f"]},"email_verified":{"type":"number","enum":[0,1]},"cover":{"type":"string"},"cover_server":{"type":"string"},"cover_dir":{"type":"string"},"created_at":{"type":"string"}}}]},"UserAllModel":{"allOf":[{"$ref":"#/components/schemas/UserModel"},{"type":"object","properties":{"user_socials":{"$ref":"#/components/schemas/UserSocialModel"}}},{"type":"object","properties":{"user_settings":{"$ref":"#/components/schemas/UserSettingModel"}}}]},"UserSocialModel":{"type":"object","properties":{"user_id":{"type":"number"},"facebook":{"type":"string"},"instagram":{"type":"string"},"patreon":{"type":"string"},"twitter":{"type":"string"},"youtube":{"type":"string"}}},"UserSettingModel":{"type":"object","properties":{"user_id":{"type":"number"},"dark_mode":{"type":"number"},"language":{"type":"string"},"show_explicit":{"type":"number"}}},"CollectionModel":{"type":"object","properties":{"id":{"type":"number"},"user_id":{"type":"number"},"type":{"type":"string"},"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number"},"is_editable":{"type":"number"},"created_at":{"type":"string"},"collection_has_artworks":{"type":"array","items":{"$ref":"#/components/schemas/CollectionHasArtworksModel"}},"users":{"$ref":"#/components/schemas/UserLiteModel"}}},"CollectionHasArtworksModel":{"type":"object","properties":{"artworks":{"$ref":"#/components/schemas/ArtworkLiteModel"}}},"ArtworkLiteModel":{"type":"object","properties":{"id":{"type":"number"},"user_id":{"type":"number"},"is_explicit":{"type":"number","enum":[0,1]},"scheduled_post":{"type":"string"},"users":{"$ref":"#/components/schemas/UserLiteModel"},"artwork_assets":{"type":"array","items":{"$ref":"#/components/schemas/ArtworkAssetsModel"}}}},"ArtworkModel":{"allOf":[{"$ref":"#/components/schemas/ArtworkLiteModel"},{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"created_at":{"type":"string"},"artwork_has_tags":{"$ref":"#/components/schemas/ArtworkHasTagsModel"},"artwork_views":{"$ref":"#/components/schemas/ArtworkViewsModel"},"_count":{"type":"object","properties":{"artwork_assets":{"type":"number"},"artwork_comments":{"type":"number"},"artwork_likes":{"type":"number"},"collection_has_artworks":{"type":"number"}}},"liked":{"type":"boolean"},"saved":{"type":"boolean"}}}]},"ArtworkAssetsModel":{"type":"object","properties":{"work_id":{"type":"number"},"name":{"type":"string"},"driver":{"type":"string"},"bucket":{"type":"string"},"b2_file_id":{"type":"string"},"filename":{"type":"string"},"file_order":{"type":"number"}}},"ArtworkHasTagsModel":{"type":"array","items":{"type":"object","properties":{"artwork_tags":{"type":"object","properties":{"id":{"type":"number"},"tag":{"type":"string"}}}}}},"ArtworkViewsModel":{"type":"array","items":{"type":"object","properties":{"work_id":{"type":"number"},"date":{"type":"string"},"views":{"type":"number"}}}},"AlbumLiteModel":{"type":"object","properties":{"id":{"type":"number"},"user_id":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"is_public":{"type":"number","enum":[0,1]},"created_at":{"type":"string"},"_count":{"type":"object","properties":{"artwork_album_has_works":{"type":"number"}}}}},"AlbumHasArtworksModel":{"type":"object","properties":{"artwork_album_has_works":{"type":"array","items":{"type":"object","properties":{"artworks":{"$ref":"#/components/schemas/ArtworkLiteModel"}}}}}},"AlbumModel":{"allOf":[{"$ref":"#/components/schemas/AlbumLiteModel"},{"$ref":"#/components/schemas/AlbumHasArtworksModel"},{"type":"object","properties":{"users":{"$ref":"#/components/schemas/UserLiteModel"}}}]},"CommentModel":{"allOf":[{"type":"object","properties":{"id":{"type":"number"},"work_id":{"type":"number"},"user_id":{"type":"number"},"comment":{"type":"string"},"users":{"$ref":"#/components/schemas/UserLiteModel"},"artworks":{"$ref":"#/components/schemas/ArtworkLiteModel"},"_count":{"type":"object","properties":{"artwork_comment_has_likes":{"type":"number"},"artwork_comment_has_replies":{"type":"number"}}}}}]},"ReplyModel":{"type":"object","properties":{"id":{"type":"number"},"comment_id":{"type":"number"},"user_id":{"type":"number"},"content":{"type":"string"},"created_at":{"type":"string"},"updated_at":{"type":"string"}}},"PaginationModel":{"type":"object","properties":{"record_total":{"type":"number"},"total_page":{"type":"number"},"current_page":{"type":"number"},"per_page":{"type":"number"},"next_previous":{"type":"object","properties":{"next_page":{"type":"number"},"prev_page":{"type":"number"},"next_page_url":{"type":"string"},"prev_page_url":{"type":"string"}}},"first_last":{"type":"object","properties":{"first_page":{"type":"number"},"last_page":{"type":"number"},"first_page_url":{"type":"string"},"last_page_url":{"type":"string"}}}}}}},"security":[{"bearerAuth":[]}]}
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Upy API Documentation
+  description: API documentation of Upy - a social community platform for Artists.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+paths:
+  # Registration Module
+  /auth/registration/register:
+    post:
+      tags:
+        - Auth Service/Registration
+      operationId: register
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                name:
+                  type: string
+                gender:
+                  description: User gender, pick either m or f
+                  type: string
+                  enum:
+                    - m
+                    - f
+                password:
+                  type: string
+              required:
+                - username
+                - email
+                - name
+                - gender
+                - password
+      responses:
+        201:
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: There is an error while trying to register the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /auth/registration/check/email:
+    post:
+      tags:
+        - Auth Service/Registration
+      operationId: checkEmail
+      summary: Check if the email is already taken or not
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        200:
+          description: Email is not taken and available to use
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/SuccessMessageModel'
+        409:
+          description: Email is already taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /auth/registration/check/username:
+    post:
+      tags:
+        - Auth Service/Registration
+      operationId: checkUsername
+      summary: Check if the username is already taken or not
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: 
+                  type: string
+              required:
+                - username
+      responses:
+        200:
+          description: Username is not taken yet and available to use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        409:
+          description: Username already taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /auth/registration/resend-verification:
+    post:
+      tags:
+        - Auth Service/Registration
+      operationId: resendVerificationMail
+      summary: Resend email verification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object 
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        200:
+          description: Mail verification successfully sent to email address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        404:
+          description: Email address is not registered on the database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /auth/registration/verify/email/{token1}/{token2}:
+    get:
+      tags:
+        - Auth Service/Registration
+      operationId: verifyEmail
+      summary: Verify the email address
+      parameters:
+        - in: path
+          name: token1
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: token2
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Email successfully verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        409:
+          description: Email already verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Authentication Module
+  /auth/authenticate:
+    post:
+      tags:
+        - Auth Service/Authentication
+      operationId: authenticate
+      summary: Authenticate user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email_username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email_username password
+      responses:
+        200:
+          description: Use successfully authenticated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          refresh_token:
+                            type: string
+        406:
+          description: 'Given credential is invalid'
+          $ref: '#/components/responses/PasswordMissmatchError'
+  /auth/check:
+    get:
+      tags:
+        - Auth Service/Authentication
+      operationId: tokenCheck
+      summary: Check if auth token is valid
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return token status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+        401:
+          description: Token is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /auth/refresh:
+    post:
+      tags:
+        - Auth Service/Authentication
+      operationId: refreshToken
+      summary: Refresh current token
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        200:
+          description: Token successfully refreshed
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          refresh_token:
+                            type: string
+        401:
+          description: Token is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Forgot Password (Password Recovery through email)
+  /user/password/forgot:
+    post:
+      tags:
+        - User/Forgot Password
+      operationId: sendResetPasswordInstruction
+      summary: Send a password recovery request to email address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        200: 
+          description: Recovery request successfully sent to email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        404:
+          description: Email address is not registered or haven't verified yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/password/recover/token-validity/{token1}/{token2}:
+    get:
+      tags:
+        - User/Forgot Password
+      operationId: checkResetPasswordTokenValidity
+      summary: Check if recovery token is still valid
+      parameters:
+        - in: path
+          name: token1
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: token2
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return token status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+  /user/password/recover/change:
+    post:
+      tags:
+        - User/Forgot Password
+      operationId: recoverChangePassword
+      summary: Change password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                iv:
+                  type: string
+                  description: Iv token obtained from url
+                content:
+                  type: string
+                  description: Content token obtained from url
+                new_password:
+                  type: string
+                  description: The new password
+              required:
+                - iv
+                - content
+                - new_password
+      responses:
+        200:
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        403:
+          description: Reset token is invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Change current password via app
+  /user/password/current/check:
+    post:
+      tags:
+        - User/Change Password
+      operationId: checkCurrentPassword
+      summary: Validate confirmation password
+      description: Used to validate current password before changing the password
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: number
+                current_password:
+                  type: string
+              required:
+                - user_id
+                - current_password
+      responses:
+        200:
+          description: Confirmation password match with current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        403:
+          description: Confirmation password did not match with current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/password/renew:
+    post:
+      tags:
+        - User/Change Password
+      operationId: changePassword
+      summary: Change current password
+      security:
+        - bearerAuth: []
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: number
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+              required:
+                - user_id
+                - current_password
+                - new_password
+      responses:
+        200:
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Confirmation password did not match with current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # User Modules
+  /user/info:
+    get:
+      tags: 
+        - User
+      operationId: getCurrentUserInfo
+      summary: Get current authenticated user info
+      description: Get current authenticated user information based on token given on header
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return information of authenticated user (current user logon)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data: 
+                    $ref: '#/components/schemas/UserAllModel'
+        401:
+          description: User is not authenticated
+          $ref: '#/components/responses/UnauthorizedError'
+  /user/info/id/{userId}:
+    get:
+      tags:
+        - User
+      operationId: getUserInfoById
+      summary: Get user info by ID
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return user info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/UserAllModel'
+        404:
+          description: User with given ID not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/info/username/{username}:
+    get:
+      tags:
+        - User
+      operationId: getUserInfoByUsername
+      summary: Get user info by username
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAllModel'
+        404:
+          description: User with username not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/info/pen/{penName}:
+    get:
+      tags:
+        - User
+      operationId: getUserInfoByPenName
+      summary: Get user info by Pen Name
+      parameters:
+        - in: path
+          name: penName
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAllModel'
+        404:
+          description: User with Pen Name not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/pen/check/{penName}:
+    get:
+      tags:
+        - User
+      summary: Check is pen name taken or not
+      security:
+        - bearerAuth: []
+      operationId: penNameCheck
+      parameters:
+        - in: path
+          name: penName
+          required: true
+          schema:
+            type: string
+      responses:
+        200: 
+          description: Return Pen Name status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Update User Information Module
+  /user/update/info:
+    post:
+      tags:
+        - User/Update User Info
+      operationId: updateUserInfo
+      summary: Update user information
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                gender:
+                  type: string
+                  enum:
+                    - m
+                    - f
+                bio:
+                  type: string
+                location:
+                  type: string
+                pen_name:
+                  type: string
+              required:
+                - id
+      responses:
+        200:
+          description: User info successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Current user don't have permission to update user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/update/social:
+    post:
+      tags:
+        - User/Update User Info
+      operationId: updateUserSocial
+      summary: Update user social links
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                facebook:
+                  type: string
+                instagram:
+                  type: string
+                patreon:
+                  type: string
+                twitter:
+                  type: string
+                youtube:
+                  type: string
+              required:
+                - id
+      responses:
+        200:
+          description: User socials successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Current user don't have permission to update user socials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/update/preference:
+    post:
+      tags:
+        - User/Update User Info
+      operationId: updateUserPreference
+      summary: Update user settings
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                language:
+                  type: string
+                  enum:
+                    - en-US
+                    - ja-JP
+                    - id-ID
+                dark_mode:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                show_explicit:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+              required:
+                - id
+      responses:
+        200:
+          description: User preference successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Current user don't have permission to update user preference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/update/username:
+    post:
+      tags:
+        - User/Update User Info
+      operationId: changeUsername
+      summary: Change username
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_username:
+                  type: string
+              required:
+                - new_username
+      responses:
+        200:
+          description: Successfully changed username
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        403:
+          description: Need pro membership to do this action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        409:
+          description: Username taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Change User Avatar & Cover Modules
+  /user/update/avatar:
+    post: 
+      tags:
+        - User/Change User Media
+      operationId: updateAvatar
+      summary: Change current user avatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Successfully change avatar
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          avatar:
+                            type: string
+        406:
+          description: There is an error while trying to change the avatar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/update/cover:
+    post: 
+      tags:
+        - User/Change User Media
+      operationId: updateCover
+      summary: Change current user cover
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Successfully change cover
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data: 
+                        type: object
+                        properties:
+                          cover:
+                            type: string
+        406:
+          description: There is an error while trying to change the cover
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # User Following & Followers
+  /user/follows/is-following/{userIdToCheck}:
+    get:
+      tags:
+        - User/Following & Followers
+      operationId: isFollowing
+      summary: Check is user login following specific user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userIdToCheck
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return information is current user login following the user or not
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      is_following:
+                        type: boolean
+  /user/follows/follow/{userIdToFollow}:
+    post:
+      tags:
+        - User/Following & Followers
+      operationId: followUser
+      summary: Follow a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userIdToFollow
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: User followed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        409:
+          description: User already followed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/follows/unfollow/{userIdToUnfollow}:
+    post:
+      tags:
+        - User/Following & Followers
+      operationId: unfollowUser
+      summary: Unfollow a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userIdToUnfollow
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: User unfollowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        400:
+          description: User already unfollowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /user/follows/following/{userId}:
+    get:
+      tags:
+        - User/Following & Followers
+      operationId: followingList
+      summary: List followed user of specific user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return user followed by user Id provided on url param
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          followings:
+                            type: array
+                            items:
+                              allOf:
+                              - $ref: '#/components/schemas/UserLiteModel'
+                              - type: object
+                                properties:
+                                  cover_bucket:
+                                    type: string
+                                  cover_filename:
+                                    type: string
+                          pagination:
+                            $ref: '#/components/schemas/PaginationModel'
+  /user/follows/followers/{userId}:
+    get:
+      tags:
+        - User/Following & Followers
+      operationId: followersList
+      summary: List followers of user of specific user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return followers of user Id provided on url param
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          followers:
+                            type: array
+                            items:
+                              allOf:
+                              - $ref: '#/components/schemas/UserLiteModel'
+                              - type: object
+                                properties:
+                                  cover_bucket:
+                                    type: string
+                                  cover_filename:
+                                    type: string
+                                  is_following:
+                                    type: boolean
+                          pagination:
+                            $ref: '#/components/schemas/PaginationModel'
+  /user/{user_id}/count/followers:
+    get:
+      tags:
+        - User/Following & Followers
+      operationId: countFollowers
+      summary: Count how many followers do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of followers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/followings:
+    get:
+      tags:
+        - User/Following & Followers
+      operationId: countFollowings
+      summary: Count how many users do this person follow
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of user following
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/artwork:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserArtworks
+      summary: Count how many artworks do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of artworks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/album:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserAlbums
+      summary: Count how many album do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of albums
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/album/artwork:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserArtworkAlbums
+      summary: Count how many artwork album do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total number of artwork albums
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/collection:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserCollections
+      summary: Count how many collection do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/collection/artwork:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserArtworkCollections
+      summary: Count how many artwork collection do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total number of artwork collections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
+  # Collection Modules
+  /collections:
+    patch:
+      tags:
+        - Collections
+      operationId: updateCollection
+      summary: Update information of current existing collection
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                is_public:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+              required:
+                - id
+      responses:
+        200:
+          description: Successfully updating collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /collections/create:
+    post: 
+      tags:
+        - Collections
+      operationId: create
+      summary: Create a new collection
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                is_public:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                type:
+                  type: string
+                  enum:
+                    - artwork
+                    - comic
+                    - tutorial
+      responses:
+        201:
+          description: Collection created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/CollectionModel'
+  /collections/{id}:
+    get:
+      tags:
+        - Collections
+      operationId: detail
+      summary: Get collection info by collection Id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return collection info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionModel'
+        404:
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+    delete:
+      tags:
+        - Collections
+      summary: Remove a collection
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Collection successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        400:
+          description: Don't have permission to delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /collections/{id}/items:
+    get:
+      tags:
+        - Collections
+      operationId: listCollectionItems
+      summary: Get list of collection
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+      responses:
+        200:
+          description: Return list of collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CollectionHasArtworksModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /collections/user/{userId}:
+    get:
+      tags:
+        - Collections
+      operationId: listUserCollections
+      summary: List collection owned by user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - comic
+              - tutorial
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return user collections
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      collections:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CollectionModel'
+  # Add/remove item from/to collection
+  /collections/later:
+    post:
+      tags:
+        - Collections
+      operationId: addItemForLater
+      summary: Add item to 'for later' collection
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: number
+      parameters:
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - comic
+              - tutorial
+      responses:
+        201:
+          description: Selected item added to for later collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /collections/{collectionId}/items:
+    post:
+      tags:
+        - Collections
+      operationId: addItemToCollection
+      summary: Add item(s) to specific collection
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: collectionId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - comic
+              - tutorial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: number
+      responses:
+        201:
+          description: Selected item added to collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+    delete:
+      tags:
+        - Collections
+      operationId: removeItemFromCollection
+      summary: Remove item(s) from specific collection
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: collectionId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - comic
+              - tutorial
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: number
+      responses:
+        200:
+          description: Selected item(s) Successfully removed from collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /collections/current/{type}/{work_id}:
+    get:
+      tags:
+        - Collections
+      operationId: getCurrentSaveInfo
+      summary: List where the work saved
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - comic
+              - tutorial
+        - in: path
+          name: work_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return collections list where the work is saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        collection_id:
+                          type: number
+                        work_id:
+                          type: number
+                        created_at:
+                          type: string
+  # Artwork Modules
+  # CRUD
+  /artworks/post:
+    post:
+      tags:
+        - Artwork/CRUD
+      operationId: post
+      summary: Create/upload new artworks
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                tags:
+                  type: string
+                is_explicit:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                scheduled_post:
+                  type: string
+                  nullable: true
+                files[]:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                file_order[]:
+                  type: array
+                  items:
+                    type: number
+      responses:
+        201:
+          description: Successfully uploaded new artwork
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          user_id:
+                            type: number
+                          title:
+                            type: string
+                          description:
+                            type: string
+                          is_explicit:
+                            type: number
+                            enum:
+                              - 0
+                              - 1
+                          scheduled_post:
+                            type: string
+                          created_at:
+                            type: string
+                          updated_at:
+                            type: string
+  /artworks:
+    patch:
+      tags:
+        - Artwork/CRUD
+      operationId: updateWork
+      summary: Update existing artwork information
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                title:
+                  type: string
+                description:
+                  type: string
+                is_explicit:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                scheduled_post:
+                  type: string
+                  nullable: true
+                tags:
+                  type: string
+              required:
+                - id
+      responses:
+        200:
+          description: Artwork information successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Input is not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+    delete:
+      tags:
+        - Artwork/CRUD
+      operationId: deleteWork
+      summary: Remove artwork
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items: 
+                type: number
+      responses:
+        200:
+          description: Selected artwork(s) successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/view/{id}:
+    get:
+      tags:
+        - Artwork/CRUD
+      operationId: view
+      summary: View detail information of artwork
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return information of artwork
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtworkModel'
+  # Artwork Likes
+  /artworks/count-likes/{id}:
+    get:
+      tags:
+        - Artwork/Likes
+      operationId: countLikes
+      summary: Count how many like does the work have
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return the total number of likes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: number
+  /artworks/like:
+    post:
+      tags:
+        - Artwork/Likes
+      operationId: like
+      summary: Like an artwork
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+      responses:
+        200:
+          description: Return status that the artwork successfully liked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        404:
+          description: Return work not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/unlike:
+    post:
+      tags:
+        - Artwork/Likes
+      operationId: unlike
+      summary: Unlike a liked artwork
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+      responses:
+        200:
+          description: Return status that the artwork successfully unliked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Albums Module
+  # List current save info
+  /albums/current/{type}/{work_id}:
+    get:
+      tags:
+        - Albums
+      operationId: getCurrentAlbumSaveInfo
+      summary: List wherever the item were saved
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: 
+              - artwork
+              - comic
+              - tutorial
+        - in: path
+          name: work_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return all albums that save this item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        album_id:
+                          type: number
+                        work_id:
+                          type: number
+                        created_at:
+                          type: string
+  # Add/remove item(s)
+  /albums/add-work:
+    post:
+      tags:
+        - Albums
+      operationId: addWorkToAlbum
+      summary: Add artwork(s) to album
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                album_id:
+                  type: number
+                work_ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - album_id
+                - work_ids
+      responses:
+        201:
+          description: Artwork(s) added to album
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Don't have a right to add work(s) to selected album or the album is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /albums/work/remove:
+    delete:
+      tags:
+        - Albums
+      summary: Remove a work(s) from album
+      operationId: removeWorkFromAlbum
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                album_id:
+                  type: number
+                work_ids:
+                  type: array
+                  items:
+                    type: number
+              required:
+                - album_id
+                - work_ids
+      responses:
+        200:
+          description: Successfully remove selected work(s) from selected album
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: You don't have permission to perform this action on this album or the album is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # CRUD
+  /albums/{id}:
+    get:
+      tags:
+        - Albums
+      operationId: getAlbumById
+      summary: View detailed information about the album
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return detail information of album
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumLiteModel'
+    delete:
+      tags:
+        - Albums
+      operationId: deleteAlbum
+      summary: Delete an album
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Album successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        406:
+          description: Current user don't have permission to delete this album
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /albums/create:
+    post: 
+      tags:
+        - Albums
+      operationId: createAlbum
+      summary: Create a new album
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                is_public:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                type:
+                  type: string
+                  enum:
+                    - artwork
+                    - comic
+                    - tutorial
+              required:
+                - name
+                - is_public
+                - type
+      responses:
+        201:
+          description: Album successfully created
+          content:  
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          user_id:
+                            type: number
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          is_public:
+                            type: number
+                          created_at:
+                            type: string
+  /albums:
+    patch:
+      tags:
+        - Albums
+      operationId: updateAlbum
+      summary: Update information of current existing album
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                is_public:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+              required:
+                - id
+      responses:
+        200:
+          description: Successfully updating album
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Album Items
+  /albums/list/{id}:
+    get:
+      tags:
+        - Albums
+      summary: List album items
+      operationId: getAlbumItems
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return album items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            artworks:
+                              $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /albums/user/{userId}:
+    get:
+      tags:
+        - Albums
+      operationId: listUserAlbums
+      summary: List user's albums
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: 
+              - artwork
+              - comic
+              - tutorial
+      responses:
+        200:
+          description: Return list of user's albums
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      albums:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AlbumModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  # Artwork Comment Module
+  /artworks/comments/{id}:
+    get:
+      tags:
+        - Artwork/Comments
+      operationId: getComments
+      summary: List comments of artwork
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return comments of artwork
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      comments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CommentModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+    delete:
+      tags:
+        - Artwork/Comments
+      operationId: removeComment
+      summary: Remove a comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number  
+      responses:
+        200:
+          description: Comment successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/comments:
+    post:
+      tags:
+        - Artwork/Comments
+      operationId: addComment
+      summary: Add new comment to artwork
+      requestBody:
+        content:  
+          application/json:
+            schema:
+              type: object
+              properties:
+                work_id:
+                  type: number
+                comment:
+                  type: string
+              required:
+                - work_id
+                - comment
+      responses:
+        201:
+          description: Comment successfully added
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CommentModel'
+  # Comment Replies
+  /artworks/comments/reply:
+    post:
+      tags:
+        - Artwork/Comments/Replies
+      operationId: reply
+      summary: Reply a comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment_id:
+                  type: number
+                reply:
+                  type: string
+              required:
+                - comment_id
+                - reply
+      responses:
+        201:
+          description: Reply successfully added
+          content: 
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/ReplyModel'
+                          - type: object
+                            properties:
+                              users:
+                                $ref: '#/components/schemas/UserLiteModel'
+
+  /artworks/comments/reply/{replyId}:
+    delete: 
+      tags:
+        - Artwork/Comments/Replies
+      operationId: removeReply
+      summary: Remove a reply
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: replyId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Reply successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+        400:
+          description: Don't have permission to do this action
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/comments/replies/{commentId}:
+    get:
+      tags:
+        - Artwork/Comments/Replies
+      operationId: getReplies
+      summary: List replies of comment
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+      responses:
+        200:
+          description: Return list of replies of comment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      replies:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/ReplyModel'
+                            - type: object
+                              properties:
+                                users:
+                                  $ref: '#/components/schemas/UserLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  # Reply likes
+  /artworks/comments/reply/like/{replyId}:
+    post:
+      tags:
+        - Artwork/Comments/Replies
+      operationId: likeReply
+      summary: Like a reply
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: replyId
+          required: true
+          schema:
+            type: number
+      responses:
+        201:
+          description: Reply successfully liked
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/comments/reply/unlike/{replyId}:
+    delete:
+      tags:
+        - Artwork/Comments/Replies
+      operationId: unlikeReply
+      summary: Unlike a reply
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: replyId
+          required: true
+          schema:
+            type: number
+      responses:
+        200 :
+          description: Successfully unliked reply
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Comment Likes
+  /artworks/comments/like/{id}:
+    post:
+      tags:
+        - Artwork/Comments/Likes
+      operationId: likeAComment
+      summary: Like a comment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Comment successfully liked
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessMessageModel'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user_id:
+                            type: number
+                          comment_id:
+                            type: number
+                          created_at:
+                            type: string
+  /artworks/comments/unlike/{id}:
+    delete:
+      tags:
+        - Artwork/Comments/Likes
+      operationId: unlikeAComment
+      summary: Unlike a comment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Successfully unliked a comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  # Artwork Views
+  /artworks/add-view/{id}:
+    post:
+      tags:
+        - Artwork/Views
+      operationId: addViewCount
+      summary: Increase view count of artwork
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Successfully increased view count of artwork
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /artworks/count-views/{id}:
+    get:
+      tags:
+        - Artwork/Views
+      operationId: countViews
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: mode
+          required: true
+          schema:
+            type: string
+            enum:
+              - daily
+              - weekly
+              - monthly
+              - all-time
+      responses:
+        200:
+          description: Return total of view of the artwork
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:  
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      views:
+                        type: number
+  # List Artworks with Different Output
+  /artworks/user/{userId}:
+    get:
+      tags:
+        - Artwork/List
+      operationId: getUserArtworks
+      summary: List user's artworks
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+      responses:
+        200:
+          description: Return user's artworks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /artworks/latest:
+    get:
+      tags:
+        - Artwork/List
+      operationId: getLatestWorks
+      summary: List latest uploaded artworks
+      parameters:
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: mode
+          required: false
+          schema:
+            type: string
+            enum: 
+              - safe
+              - explicit
+        - in: query
+          name: tags
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: following
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Return latest uploaded artworks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /artworks/following:
+    get:  
+      tags:
+        - Artwork/List
+      operationId: getFollowingArtworks
+      summary: Get latest uploaded artworks from followed users
+      parameters:
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: mode
+          required: false
+          schema:
+            type: string
+            enum: 
+              - safe
+              - explicit
+      responses:
+        200:
+          description: Return artworks from followed users
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /artworks/most:
+    get:
+      tags:
+        - Artwork/List
+      operationId: getMostPopular
+      summary: List most popular artworks (with advanced sort and filter features)
+      parameters:
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum:
+              - daily
+              - weekly
+              - monthly
+              - all-time
+        - in: query
+          name: by
+          required: true
+          schema:
+            type: string
+            enum:
+              - likes
+              - comments
+              - views
+              - none
+        - in: query
+          name: mode
+          required: false
+          schema:
+            type: string
+            enum: 
+              - safe
+              - explicit
+        - in: query
+          name: tags
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: following
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Return most popular artworks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /artworks/tags:
+    get:
+      tags:
+        - Artwork/Tags
+      operationId: searchTags
+      summary: Search available tags by keyword given
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return all found tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    value:
+                      type: string
+  /artworks/tags/get-keys-by-tags:
+    get:
+      tags:
+        - Artwork/Tags
+      operationId:  getKeysByTags
+      summary: Get tag keys by comma separated tags
+      parameters:
+        - in: query
+          name: tags
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return tag data along with keys
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      tags:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            tag:
+                              type: string
+  /artworks/random:
+    get:
+      tags:
+        - Artwork/Random
+      operationId: getRandomArtwork
+      summary: Roll a dice and get a random artwork
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return random artwork ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+  /settings:
+    get:
+      tags:
+        - Settings
+      operationId: getSetting
+      summary: Get setting value
+      parameters:
+        - in: query
+          name: key
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return setting value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+  /search/user:
+    get:
+      tags:
+        - Search
+      operationId: searchUsers
+      summary: Search users (O)
+      description: Find users by keyword, the search method will find on username, name or pen name that contain provided keyword. 
+        <br><br>Auth token is optional, but if token is present it will return an additional keys that only available on authenticated access.
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return all found users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/UserModel'
+                            - type: object
+                              properties:
+                                is_following:
+                                  type: boolean
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /search/artworks:
+    get:
+      tags:
+        - Search
+      operationId: searchArtworks
+      summary: Search artworks (O)
+      description: Find artworks by keyword, the search method will find on title, description or tags that contain provided keyword.
+        <br><br>Auth token is optional, but if it's present, it will return an additional keys that only appears in authenticated access only.
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: range
+          required: true
+          schema:
+            type: string
+            enum:
+              - daily
+              - weekly
+              - monthly
+              - all-time
+        - in: query
+          name: by
+          required: true
+          schema:
+            type: string
+            enum:
+              - likes
+              - comments
+              - views
+              - none
+        - in: query
+          name: mode
+          required: false
+          schema:
+            type: string
+            enum: 
+              - safe
+              - explicit
+        - in: query
+          name: following
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: recent
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return most popular artworks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/artworks/liked:
+    get:
+      tags:
+        - Notifications/Artworks/Likes
+      operationId: getArtworkLikedNotifications
+      summary: Get artwork liked notifications
+      description: Get notification when artwork liked by other users, auth token required.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: show_limit
+          description: Determine how many user to show on each notification, the rest user who liked the artwork will be displayed as 'other X people liked your artwork'
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of artwork likes notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            work_id:
+                              type: number
+                            is_read:
+                              type: number
+                            driver:
+                              type: string
+                            bucket:
+                              type: string
+                            b2_file_id:
+                              type: string
+                            filename:
+                              type: string
+                            user_liked:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name:
+                                    type: string
+                                  username:
+                                    type: string
+                            total_liked:
+                              type: number
+                            rest_total_liked:
+                              type: number
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/artworks/liked/read/{workId}:
+    post:
+      tags:
+        - Notifications/Artworks/Likes
+      operationId: markArtworkLikeNotificationAsRead
+      summary: Mark specific artwork like notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: workId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/liked/read/all:
+    post:
+      tags:
+        - Notifications/Artworks/Likes
+      operationId: readAllArtworkLikeNotifications
+      summary: Read all artwork like notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All current notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/liked/clear:
+    post:
+      tags:
+        - Notifications/Artworks/Likes
+      operationId: clearAllArtworkLikeNotifications
+      summary: Clear/delete all artwork like notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All current notification cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comments:
+    get:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: getArtworkCommentNotifications
+      summary: Get user artwork comment notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of comment notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            work_id:
+                              type: number
+                            comment:
+                              type: string
+                            users:
+                              type: object
+                              properties:
+                                name: 
+                                  type: string
+                                username:
+                                  type: string
+                                avatar_bucket:
+                                  type: string
+                                avatar_filename:
+                                  type: string
+                            artworks:
+                              type: object
+                              properties:
+                                artwork_assets:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      bucket:
+                                        type: string
+                                      filename:
+                                        type: string
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/artworks/comments/read/{workId}/{commentId}:
+    post:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: markArtworkCommentNotificationAsRead
+      summary: Mark specific artwork comment notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: workId
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comments/liked:
+    get:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: getArtworkCommentLikedNotifications
+      summary: Get user artwork comment liked notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: show_limit
+          description: Determine how many user to show on each notification, the rest user who liked the comment will be displayed as 'other X people liked your comment'
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of liked comment notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            comment_id:
+                              type: number
+                            comment:
+                              type: string
+                            is_read:
+                              type: number
+                            user_liked:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                  avatar_bucket:
+                                    type: string
+                                  avatar_filename:
+                                    type: string
+                            artworks:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                assets:
+                                  type: object
+                                  properties:
+                                    bucket:
+                                      type: string
+                                    filename:
+                                      type: string
+                            total_liked:
+                              type: number
+                            rest_total_liked:
+                              type: number
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/artworks/comments/liked/read/{commentId}:
+    post:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: markArtworkCommentLikeNotificationAsRead
+      summary: Mark specific artwork comment like notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comment/replies/read/{commentId}:
+    post:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: markArtworkCommentReplyNotificationAsRead
+      summary: Mark specific artwork comment reply notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comment/replies:
+    get:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: getArtworkCommentReplyNotifications
+      summary: Get artwork comment reply notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: show_limit
+          description: Determine how many user to show on each notification, the rest user who replied to your comment will be displayed as 'other X people replied to your comment'
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of comment reply notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            content:
+                              type: string
+                            comment_id:
+                              type: number
+                            comment:
+                              type: string
+                            user_replied:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name:
+                                    type: string
+                                  username:
+                                    type: string
+                            artworks:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                assets:
+                                  type: object
+                                  properties:
+                                    bucket:
+                                      type: string
+                                    filename:
+                                      type: string
+                            total_liked:
+                              type: number
+                            rest_total_liked:
+                              type: number
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/artworks/comment/replies/liked:
+    get:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: getArtworkCommentReplyLikedNotifications
+      summary: Get artwork comment reply liked notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: show_limit
+          description: Determine how many user to show on each notification, the rest user who liked the artwork will be displayed as 'other X people replied to your comment'
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of comment reply likes notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            content:
+                              type: string
+                            user_liked:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name:
+                                    type: string
+                                  username:
+                                    type: string
+                            artworks:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                assets:
+                                  type: object
+                                  properties:
+                                    bucket:
+                                      type: string
+                                    filename:
+                                      type: string
+                            total_liked:
+                              type: number
+                            rest_total_liked:
+                              type: number
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  
+  /notifications/artworks/comments-and-replies/read/all:
+    post:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: readAllArtworkCommentAndReplyNotifications
+      summary: Read all artwork comment related notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All current notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comments-and-replies/clear:
+    post:
+      tags:
+        - Notifications/Artworks/Comments
+      operationId: clearAllArtworkCommentAndReplyNotifications
+      summary: Clear/delete all artwork comment related notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All current notification cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/users/follow:
+    get:
+      tags:
+        - Notifications/Users
+      operationId: getUserFollowNotifications
+      summary: Get user follow notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of user follow notification
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            is_read:
+                              type: number
+                            follower_detail:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: number
+                                  name: 
+                                    type: string
+                                  username:
+                                    type: string
+                                  avatar_bucket:
+                                    type: string
+                                  avatar_filename:
+                                    type: string
+                            created_at:
+                              type: string
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/users/follow/read/{followerId}:
+    post:
+      tags:
+        - Notifications/Users
+      operationId: markUserFollowNotificationAsRead
+      summary: Mark specific user follow notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: followerId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/users/follow/read/all:
+    post:
+      tags:
+        - Notifications/Users
+      operationId: markAllUserFollowNotificationAsRead
+      summary: Mark all user follow notification as read
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/users/follow/clear:
+    post:
+      tags:
+        - Notifications/Users
+      operationId: clearUserFollowNotifications
+      summary: Clear all user follow notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All notifications cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/liked/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkLikeMarker
+      summary: Return how many unexpanded artwork like notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/marker:
+    get:
+      tags:
+        - Notifications/Markers
+      operationId: getMarkers
+      summary: Return how many unexpanded all notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/marker/clear:
+    post:
+      tags:
+        - Notifications/Markers
+      operationId: clearMarkers
+      summary: Clear all notification counter
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All active/unexpanded notifications cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /notifications/artworks/comments/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkCommentMarker
+      summary: Return how many unexpanded artwork comment notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/artworks/comments/liked/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkCommentLikedMarker
+      summary: Return how many unexpanded artwork comment liked notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/artworks/comments/replies/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkCommentRepliesMarker
+      summary: Return how many unexpanded artwork comment reply notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/artworks/comments/replies/liked/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkCommentReplyLikesMarker
+      summary: Return how many unexpanded artwork comment reply like notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/artworks/comments-and-replies/marker:
+    get:
+      tags:
+        - Notifications/Markers/Artworks
+      operationId: getArtworkCommentsAndRepliesMarker
+      summary: Return how many unexpanded all artwork comment related notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/users/follow/marker:
+    get:
+      tags:
+        - Notifications/Markers/Users
+      operationId: getUserFollowMarker
+      summary: Return how many unexpanded user follow notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return number of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /feeds/create:
+    post:
+      tags:
+        - Feeds
+      operationId: createFeed
+      summary: Create feed post
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: number
+                visibility:
+                  type: string
+                  enum:
+                    - public
+                    - followers
+                who_can_reply:
+                  type: string
+                  enum:
+                    - public
+                    - followers
+                work_id:
+                  type: number
+                feed_id:
+                  type: number
+              required:
+                - text
+                - visibility
+                - who_can_reply
+      responses:
+        201:
+          description: Feed successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/FeedModel'
+  /feeds/update:
+    post:
+      tags:
+        - Feeds
+      operationId: Update feed post
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                text:
+                  type: number
+                visibility:
+                  type: string
+                  enum:
+                    - public
+                    - followers
+                who_can_reply:
+                  type: string
+                  enum:
+                    - public
+                    - followers
+              required:
+                - id
+                - text
+                - visibility
+                - who_can_reply
+      responses:
+        200:
+          description: Feed successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/FeedModel'
+  /feeds/latest:
+    get:
+      tags:
+        - Feeds
+      operationId: getLatestFeeds
+      summary: Get latest feeds from anyone
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of latest feeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/LatestFeedModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /feeds/following:
+    get:
+      tags:
+        - Feeds
+      operationId: getLatestFeeds
+      summary: Get latest feeds from anyone
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return list of latest feeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/LatestFeedModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /feeds/like/{feedId}:
+    post:
+      tags:
+        - Feeds
+      operationId: likeFeed
+      summary: Like a feed post
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: number
+      responses:
+        201:
+          description: Feed post successfully liked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /feeds/unlike/{feedId}:
+    post:
+      tags:
+        - Feeds
+      operationId: unlikeFeed
+      summary: Unlike a liked feed post
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Feed post successfully unliked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /feeds/comment:
+    post:
+      tags:
+        - Feeds
+      operationId: commentFeed
+      summary: Comment to feed post
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feed_id:
+                  type: number
+                comment:
+                  type: string
+              required:
+                - feed_id
+                - comment
+      responses:
+        201:
+          description: Feed comment added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/FeedCommentModel'
+  /feeds/{commentId}/like:
+    post:
+      tags:
+        - Feeds
+      operationId: likeFeedComment
+      summary: Like a feed comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+      responses:
+        201:
+          description: Feed comment liked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /feeds/{commentId}/unlike:
+    post:
+      tags:
+        - Feeds
+      operationId: unlikeFeedComment
+      summary: Unlike a liked feed comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: number
+      responses:
+        201:
+          description: Feed comment unliked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /feeds/{feedId}/comments:
+    get:
+      tags:
+        - Feeds
+      operationId: getFeedComments
+      summary: List all feed comments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return all feed comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      comments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FeedCommentModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /feeds:
+    get:  
+      tags:
+        - Feeds
+      operationId: getFeeds
+      summary: Get latest updated feeds combined with artwork posts
+      parameters:
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: mode
+          required: false
+          schema:
+            type: string
+            enum: 
+              - safe
+              - explicit
+      responses:
+        200:
+          description: Return latest feed and artwork posts
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /feeds/{feedId}:
+    get:
+      tags:
+        - Feeds
+      operationId: getFeedById
+      summary: Get feed detail by ID
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return detail of feed by ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  feed:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      user_id:
+                        type: number
+                      text:
+                        type: number
+                      visibility:
+                        type: number
+                      who_can_reply:
+                        type: number
+                      work_id:
+                        type: number
+                      feed_id:
+                        type: number
+                      created_at:
+                        type: number
+                      updated_at:
+                        type: number
+                      feed_has_files:
+                        type: number
+                      artworks:
+                        type: number
+                      feeds:
+                        type: number
+                      users:
+                        $ref: '#/components/schemas/UserLiteModel'
+                      _count:
+                        type: object
+                        properties:
+                          feed_comments:
+                            type: number
+                          feed_likes:
+                            type: number
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: JWT authentication header using the bearer scheme
+      scheme: bearer
+      bearerFormat: JWT
+    none:
+      type: http
+      description: Publicly accessible (no authentication needed, but the result will be different from authenticated user such as is login user following the user or is the login user liked a work or not)
+      scheme: none
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    PasswordMissmatchError:
+      description: Given credential is invalid
+  schemas:
+    SuccessMessageModel:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    # User schemas
+    UserLiteModel:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        pen_name:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+        avatar_driver:
+          type: string
+        avatar_bucket:
+          type: string
+        avatar_b2_file_id:
+          type: string
+        avatar_filename:
+          type: string
+    UserModel:
+      allOf:
+        - $ref: '#/components/schemas/UserLiteModel'
+        - type: object
+          properties:
+            bio:
+              type: string
+            gender:
+              type: string
+              enum:
+                - m
+                - f
+            email:
+              type: string
+            email_verified:
+              type: number
+              enum: 
+                - 0
+                - 1
+            cover_driver:
+              type: string
+            cover_bucket:
+              type: string
+            cover_b2_file_id:
+              type: string
+            cover_filename:
+              type: string
+            created_at:
+              type: string
+    UserAllModel:
+      allOf:
+        - $ref: '#/components/schemas/UserModel'
+        - type: object
+          properties:
+            user_socials:
+              $ref: '#/components/schemas/UserSocialModel'
+        - type: object
+          properties:
+            user_settings:
+              $ref: '#/components/schemas/UserSettingModel'
+    UserSocialModel:
+      type: object
+      properties:
+        user_id:
+          type: number
+        facebook:
+          type: string
+        instagram:
+          type: string
+        patreon:
+          type: string
+        twitter:
+          type: string
+        youtube:
+          type: string
+    UserSettingModel:
+      type: object
+      properties:
+        user_id:
+          type: number
+        dark_mode:
+          type: number
+        language:
+          type: string
+        show_explicit:
+          type: number
+    # Collection schemas
+    CollectionModel:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: number
+        type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        is_public:
+          type: number
+        is_editable:
+          type: number
+        created_at:
+          type: string
+        _count:
+          type: object
+          properties:
+            collection_has_artworks:
+              type: number
+        collection_has_artworks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionHasArtworksModel'
+        users:
+          $ref: '#/components/schemas/UserLiteModel'
+    CollectionHasArtworksModel:
+      type: object
+      properties:
+        artworks:
+          $ref: '#/components/schemas/ArtworkLiteModel'
+    # Artwork schemas
+    ArtworkLiteModel:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        description:
+          type: string
+        user_id:
+          type: number
+        is_explicit:
+          type: number
+          enum:
+            - 0
+            - 1
+        scheduled_post:
+          type: string
+        users:
+          $ref: '#/components/schemas/UserLiteModel'
+        artwork_assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtworkAssetsModel'
+        liked:
+          type: boolean
+        saved:
+          type: boolean
+        _count:
+          type: object
+          properties:
+            artwork_assets:
+              type: number
+    ArtworkModel:
+      allOf:
+          - $ref: '#/components/schemas/ArtworkLiteModel'
+          - type: object
+            properties:
+              created_at:
+                type: string
+              artwork_has_tags:
+                $ref: '#/components/schemas/ArtworkHasTagsModel'
+              # artwork_views:
+              #   $ref: '#/components/schemas/ArtworkViewsModel'
+              _count:
+                type: object
+                properties:
+                  artwork_assets:
+                    type: number
+                  artwork_comments:
+                    type: number
+                  artwork_likes:
+                    type: number
+                  collection_has_artworks:
+                    type: number
+              liked:
+                type: boolean
+              saved:
+                type: boolean
+              in_album:
+                type: boolean
+    ArtworkAssetsModel:
+      type: object
+      properties:
+        work_id:
+          type: number
+        name:
+          type: string
+        driver:
+          type: string
+        bucket:
+          type: string
+        b2_file_id:
+          type: string
+        filename:
+          type: string
+        file_order:
+          type: number
+    ArtworkHasTagsModel:
+      type: array
+      items: 
+        type: object
+        properties:
+          artwork_tags:
+            type: object
+            properties:
+              id:
+                type: number
+              tag:
+                type: string
+    ArtworkViewsModel:
+      type: array
+      items:
+        type: object
+        properties:
+          work_id:
+            type: number
+          date:
+            type: string
+          views:
+            type: number
+    FollowingArtworkCommentsModel:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: number
+          comment:
+            type: string
+          created_at:
+            type: string
+          updated_at:
+            type: string
+          users:
+            $ref: '#/components/schemas/UserLiteModel'
+    # Album schema
+    AlbumLiteModel:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        is_public:
+          type: number
+          enum:
+            - 0
+            - 1
+        created_at:
+          type: string
+        _count:
+          type: object
+          properties:
+            artwork_album_has_works:
+              type: number
+    AlbumHasArtworksModel:
+      type: object
+      properties:
+        artwork_album_has_works:
+          type: array
+          items:
+            type: object
+            properties:
+              artworks:
+                $ref: '#/components/schemas/ArtworkLiteModel'
+    AlbumModel: 
+      allOf:
+        - $ref: '#/components/schemas/AlbumLiteModel'
+        - $ref: '#/components/schemas/AlbumHasArtworksModel'
+        - type: object
+          properties:
+            users:
+              $ref: '#/components/schemas/UserLiteModel'
+    CommentModel:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: number
+            work_id:
+              type: number
+            user_id:
+              type: number
+            comment:
+              type: string
+            users:
+              $ref: '#/components/schemas/UserLiteModel'
+            artworks:
+              $ref: '#/components/schemas/ArtworkLiteModel'
+            _count:
+              type: object
+              properties:
+                artwork_comment_has_likes:
+                  type: number
+                artwork_comment_has_replies:
+                  type: number
+            created_at:
+              type: string
+            updated_at:
+              type: string
+            liked:
+              type: boolean
+    ReplyModel:
+      type: object
+      properties:
+        id:
+          type: number
+        comment_id:
+          type: number
+        user_id:
+          type: number
+        content:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        liked:
+          type: boolean
+        _count:
+          type: object
+          properties:
+            artwork_comment_reply_has_likes:
+              type: number
+    FeedModel:
+      type: object
+      properties:
+        id:
+          type: number
+        user_id:
+          type: number
+        text:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - followers
+        who_can_reply:
+          type: string
+          enum:
+            - public
+            - followers
+        work_id:
+          type: number
+        feed_id:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    LatestFeedModel:
+      allOf:
+        - $ref: '#/components/schemas/FeedModel'
+        - type: object
+          properties:
+            feed_has_files:
+              type: array
+            artworks:
+              type: object
+            feeds:
+              $ref: '#/components/schemas/FeedModel'
+    FeedCommentModel:
+      type: object
+      properties:
+        id:
+          type: number
+        feed_id:
+          type: number
+        user_id:
+          type: number
+        comment:
+          type: string
+        is_notif_expanded:
+          type: number
+        is_read:
+          type: number
+        is_cleared:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    # Pagination schema
+    PaginationModel:
+      type: object
+      properties: 
+        record_total:
+          type: number
+        total_page:
+          type: number
+        current_page:
+          type: number
+        per_page:
+          type: number
+        next_previous:
+          type: object
+          properties:
+            next_page:
+              type: number
+            prev_page:
+              type: number
+            next_page_url:
+              type: string
+            prev_page_url:
+              type: string
+        first_last:
+          type: object
+          properties:
+            first_page:
+              type: number
+            last_page:
+              type: number
+            first_page_url:
+              type: string
+            last_page_url:
+              type: string
+    CounterModel:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            total:
+              type: number
+security:
+  - bearerAuth: []
