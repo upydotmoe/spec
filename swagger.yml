@@ -3666,7 +3666,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3679,6 +3679,144 @@ paths:
                     properties:
                       count:
                         type: number
+  /notifications/feeds:
+    get:
+      tags:
+        - Notifications/Feeds
+      operationId: getFeedNotifications
+      summary: Get notification for feed module
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: show_limit
+          description: Determine how many user to show on each notification, the rest user who liked the artwork will be displayed as 'other X people liked your artwork'
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return all notification related to feed module
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      notifications:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          text:
+                            type: string
+                          comment:
+                            type: string
+                          is_read:
+                            type: boolean
+                          users:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                name:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar_bucket:
+                                  type: string
+                                avatar_filename:
+                                  type: string
+                          total:
+                            type: number
+                          rest_total:
+                            type: number
+                          created_at:
+                            type: string
+                          type:
+                            type: string
+                            enum:
+                              - like
+                              - comment
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /notifications/feeds/read/{type}/{feedId}:
+    post:
+      tags:
+        - Notifications/Feeds
+      operationId: markFeedNotificationAsRead
+      summary: Mark specific feed notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - like
+              - comment
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /notifications/feeds/read/all:
+    post:
+      tags:
+        - Notifications/Feeds
+      operationId: markAllFeedNotificationsAsRead
+      summary: Mark all feed notifications as read
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Mark all feed notification as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /notifications/feeds/clear:
+    post:
+      tags:
+        - Notifications/Feeds
+      operationId: clearAllFeedNotifications
+      summary: Clear all feed notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return total of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
   /notifications/marker:
     get:
       tags:
@@ -3689,7 +3827,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3732,7 +3870,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3755,7 +3893,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3778,7 +3916,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3801,7 +3939,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3824,7 +3962,7 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
           content:
             application/json:
               schema:
@@ -3847,7 +3985,30 @@ paths:
         - bearerAuth: []
       responses:
         200:
-          description: Return number of unexpanded notifications
+          description: Return total of unexpanded notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+  /notifications/feeds/marker:
+    get:
+      tags:
+        - Notifications/Markers/Feeds
+      operationId: countFeedNotifications
+      summary: return how many unexpanded feed notifications
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Return total of unexpanded feed notifications
           content:
             application/json:
               schema:
@@ -3905,7 +4066,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: '#/components/schemas/FeedModel'
+                    $ref: '#/components/schemas/FeedLiteModel'
   /feeds/update:
     post:
       tags:
@@ -3949,7 +4110,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    $ref: '#/components/schemas/FeedModel'
+                    $ref: '#/components/schemas/FeedLiteModel'
   /feeds/latest:
     get:
       tags:
@@ -3988,7 +4149,7 @@ paths:
                       feeds:
                         type: array
                         items:
-                          $ref: '#/components/schemas/LatestFeedModel'
+                          $ref: '#/components/schemas/FeedModel'
                       pagination:
                         $ref: '#/components/schemas/PaginationModel'
   /feeds/following:
@@ -4028,7 +4189,7 @@ paths:
                       feeds:
                         type: array
                         items:
-                          $ref: '#/components/schemas/LatestFeedModel'
+                          $ref: '#/components/schemas/FeedModel'
                       pagination:
                         $ref: '#/components/schemas/PaginationModel'
   /feeds/like/{feedId}:
@@ -4117,7 +4278,16 @@ paths:
                   message:
                     type: string
                   data:
-                    $ref: '#/components/schemas/FeedCommentModel'
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      comment:
+                        type: string
+                      created_at:
+                        type: string
+                      users:
+                        $ref: '#/components/schemas/UserLiteModel'
   /feeds/{commentId}/like:
     post:
       tags:
@@ -4184,6 +4354,18 @@ paths:
           required: true
           schema:
             type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
       responses:
         200:
           description: Return all feed comments
@@ -4309,6 +4491,54 @@ paths:
                             type: number
                           feed_likes:
                             type: number
+                      liked:
+                        type: boolean
+  /feeds/user/{userId}:
+    get:
+      tags:
+        - Feeds
+      operationId: getFeedsByUserId
+      summary: Get feed posted by specific user
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+          description: Pagination index
+        - in: query
+          name: per_page
+          required: true
+          schema:
+            type: number
+          description: How many record to show per page of pagination
+      responses:
+        200:
+          description: Return all feeds posted by specific user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      feeds:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FeedModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
 components:
   securitySchemes:
     bearerAuth:
@@ -4667,7 +4897,7 @@ components:
           properties:
             artwork_comment_reply_has_likes:
               type: number
-    FeedModel:
+    FeedLiteModel:
       type: object
       properties:
         id:
@@ -4694,17 +4924,24 @@ components:
           type: string
         updated_at:
           type: string
-    LatestFeedModel:
+    FeedModel:
       allOf:
-        - $ref: '#/components/schemas/FeedModel'
+        - $ref: '#/components/schemas/FeedLiteModel'
         - type: object
           properties:
+            users:
+              $ref: '#/components/schemas/UserLiteModel'
             feed_has_files:
               type: array
+              items:
+                type: object
+                properties:
+                  filename:
+                    type: string
             artworks:
               type: object
             feeds:
-              $ref: '#/components/schemas/FeedModel'
+              $ref: '#/components/schemas/FeedLiteModel'
     FeedCommentModel:
       type: object
       properties:
