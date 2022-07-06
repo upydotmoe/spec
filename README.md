@@ -11,7 +11,7 @@
 <br>
 
 #### # Generate client code
-To generate client code of OpenAPI you can use <a href="https://editor.swagger.io/">Swagger Editor</a>, you just need to copy all the content of the YAML definition file from <a href="https://github.com/upydotmoe/spec/blob/main/swagger.json">swagger.json</a> and paste it in the swagger editor.
+To generate client code of OpenAPI you can use <a href="https://editor.swagger.io/">Swagger Editor</a>, you just need to copy all the content of the YAML definition file from <a href="https://github.com/upydotmoe/spec/blob/main/swagger.yml">swagger.yml</a> and paste it in the swagger editor.
 <br><br>
 The next step is go to **Generate Client** and select **typescript-fetch**, wait until the download process done. And once the file downloaded, open the ZIP file and put `api.ts` to `api/openapi/` in the front-end source code.
 
