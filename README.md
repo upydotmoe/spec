@@ -1,6 +1,6 @@
 > OpenAPI specs for Upy's API
 
-<b><i>TLDR: </i></b> This repo aimed only for anyone who want to contribute to our projects or want to use our data on your own application, it's opened to public for now but we planned to restrict it's access in the future in order to maintain the traffic requests to our system.
+<b><i>TLDR: </i></b> This repo aimed only for anyone who want to contribute to our projects or want to use our data on your own application, it's opened to public for now but we planned to restrict its access in the future in order to maintain the traffic requests to our system.
 
 <br><br>
 <p align="center">
