@@ -1050,6 +1050,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CounterModel'
+  /user/{user_id}/count/feed:
+    get:
+      tags:
+        - User/Counters
+      operationId: countUserFeeds
+      summary: Count how many feeds do user have
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return total of user feeds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CounterModel'
   /user/{user_id}/count/artwork:
     get:
       tags:
@@ -1809,6 +1828,64 @@ paths:
                           type: number
                         created_at:
                           type: string
+  /artworks/related/{workId}:
+    get:
+      tags:
+        - Artwork/List
+      operationId: getRelatedArtworks
+      summary: Get artworks that related to currently viewed artwork
+      security:
+        - none: []
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: workId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return all related artworks
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      works:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ArtworkLiteModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+  /artworks/check-availability:
+    get:
+      tags:
+        - Artworks
+      operationId: checkArtworkAvailability
+      summary: Check if there is an artwork to show to the user/visitor
+      security:
+        - none: []
+        - bearerAuth: []
+      responses:
+        200:
+          description: Throw artwork count total
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: number
   # Add/remove item(s)
   /albums/add-work:
     post:
