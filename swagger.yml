@@ -918,18 +918,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return user followed by user Id provided on url param
@@ -970,18 +960,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return followers of user Id provided on url param
@@ -1303,18 +1283,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
       responses:
         200:
           description: Return list of collection
@@ -1360,16 +1330,8 @@ paths:
           required: false
           schema:
             type: string
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return user collections
@@ -2112,16 +2074,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
       responses:
         200:
           description: Return album items
@@ -2158,16 +2112,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
         - in: query
           name: type
           required: true
@@ -2209,16 +2155,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
       responses:
         200:
           description: Return comments of artwork
@@ -2366,18 +2304,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
       responses:
         200:
           description: Return list of replies of comment
@@ -2565,18 +2493,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
       responses:
         200:
           description: Return user's artworks
@@ -2603,18 +2521,8 @@ paths:
       operationId: getLatestWorks
       summary: List latest uploaded artworks
       parameters:
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
         - in: query
           name: mode
           required: false
@@ -2659,18 +2567,8 @@ paths:
       operationId: getFollowingArtworks
       summary: Get latest uploaded artworks from followed users
       parameters:
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
         - in: query
           name: mode
           required: false
@@ -2704,18 +2602,8 @@ paths:
       operationId: getMostPopular
       summary: List most popular artworks (with advanced sort and filter features)
       parameters:
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
         - in: query
           name: range
           required: true
@@ -2900,18 +2788,8 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return all found users
@@ -2991,18 +2869,8 @@ paths:
           required: false
           schema:
             type: boolean
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return most popular artworks
@@ -3038,18 +2906,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of artwork likes notification
@@ -3174,18 +3032,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of comment notification
@@ -3283,18 +3131,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of liked comment notification
@@ -3417,18 +3255,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of comment reply notification
@@ -3501,18 +3329,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of comment reply likes notification
@@ -3616,18 +3434,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of user follow notification
@@ -3771,18 +3579,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return all notification related to feed module
@@ -4198,18 +3996,8 @@ paths:
         - none: []
         - bearerAuth: []
       parameters:
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of latest feeds
@@ -4238,18 +4026,8 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return list of latest feeds
@@ -4431,18 +4209,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return all feed comments
@@ -4469,18 +4237,8 @@ paths:
       operationId: getFeeds
       summary: Get latest updated feeds combined with artwork posts
       parameters:
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+        - $ref: '#/components/parameters/PaginationPageQuery'
         - in: query
           name: mode
           required: false
@@ -4585,18 +4343,8 @@ paths:
           required: true
           schema:
             type: number
-        - in: query
-          name: page
-          required: true
-          schema:
-            type: number
-          description: Pagination index
-        - in: query
-          name: per_page
-          required: true
-          schema:
-            type: number
-          description: How many record to show per page of pagination
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
       responses:
         200:
           description: Return all feeds posted by specific user
@@ -4616,6 +4364,204 @@ paths:
                           $ref: '#/components/schemas/FeedModel'
                       pagination:
                         $ref: '#/components/schemas/PaginationModel'
+  /reports:
+    get:
+      tags:
+        - Reports
+      operationId: getReports
+      summary: Get report list
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum:
+              - all
+              - pending
+              - closed
+        - in: query
+          name: created_at_from
+          required: false
+          schema: 
+            type: string
+        - in: query
+          name: created_at_to
+          required: false
+          schema: 
+            type: string
+        - in: query
+          name: user_id
+          required: false
+          schema: 
+            type: number
+        - in: query
+          name: reasons
+          required: false
+          schema: 
+            type: string
+        - $ref: '#/components/parameters/PaginationPageQuery'
+        - $ref: '#/components/parameters/PaginationPerPageQuery'
+      responses:
+        200:
+          description: Return all report data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      reports:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReportModel'
+                      pagination:
+                        $ref: '#/components/schemas/PaginationModel'
+    post:
+      tags:
+        - Reports
+      operationId: createNewReport
+      summary: Create a new report
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                post_id:
+                  type: number
+                reasons:
+                  type: string
+                description:
+                  type: string
+              required:
+                - type
+                - post_id
+                - reasons
+                - description
+      responses:
+        201:
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      report:
+                        $ref: '#/components/schemas/ReportModel'
+  /reports/{reportId}:
+    get:
+      tags:
+        - Reports
+      operationId: getReportById
+      summary: Get report detail by report ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: reportId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return report detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      report:
+                        $ref: '#/components/schemas/ReportModel'
+  /reports/review:
+    post:
+      tags:
+        - Reports
+      operationId: reviewReport
+      summary: Review report and give feedback to user who reported it
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                report_id:
+                  type: number
+                response:
+                  type: string
+                response_description:
+                  type: string
+              required:
+                - report_id
+                - response
+                - response_description
+      responses:
+        200:
+          description: Post reviewed and sent to user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessageModel'
+  /reports/status/{type}/{postId}:
+    get:
+      tags:
+        - Reports
+      operationId: getReportStatus
+      summary: Get report status/progress of post
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum:
+              - artwork
+              - feed
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: Return the status of report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      report:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          status:
+                            type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -4632,6 +4578,21 @@ components:
       description: Access token is missing or invalid
     PasswordMissmatchError:
       description: Given credential is invalid
+  parameters:
+    PaginationPageQuery:
+      in: query
+      name: page
+      required: true
+      schema:
+        type: number
+      description: Pagination index
+    PaginationPerPageQuery:
+      in: query
+      name: per_page
+      required: true
+      schema:
+        type: number
+      description: How many record to show per page of pagination
   schemas:
     SuccessMessageModel:
       type: object
@@ -4662,6 +4623,11 @@ components:
           type: string
         avatar_filename:
           type: string
+        email_verified:
+          type: number
+          enum:
+            - 0
+            - 1
     UserModel:
       allOf:
         - $ref: '#/components/schemas/UserLiteModel'
@@ -4676,11 +4642,6 @@ components:
                 - f
             email:
               type: string
-            email_verified:
-              type: number
-              enum: 
-                - 0
-                - 1
             cover_driver:
               type: string
             cover_bucket:
@@ -5084,5 +5045,43 @@ components:
           properties:
             total:
               type: number
+    ReportModel:
+      type: object
+      properties:
+        id:
+          type: number
+        type:
+          type: string
+          enum:
+            - artwork
+            - feed
+            - comment
+            - comment_reply
+        post_id:
+          type: number
+        reasons:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+        response:
+          type: string
+          enum:
+            - 0
+            - 1
+        status:
+          type: string
+          enum:
+            - pending
+            - closed
+        response_description:
+          type: string
+        responded_at:
+          type: string
+        user_reported:
+          $ref: '#/components/schemas/UserLiteModel'
+        user_responded:
+          $ref: '#/components/schemas/UserLiteModel'
 security:
   - bearerAuth: []
